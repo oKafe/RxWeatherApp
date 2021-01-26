@@ -57,6 +57,7 @@ extension WeatherEndpoints: TargetType {
         case .CurrentWeather(let query):
             return .requestParameters(
                 parameters: [
+                    "units": "metric",
                     "q": query,
                     "appid": "a4dd4e9a8ddf9ed12cd26e6eba29871d"],
                 encoding: URLEncoding.default)

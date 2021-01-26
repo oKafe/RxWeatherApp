@@ -15,10 +15,15 @@ class SearchWeatherVC: UIViewController {
 
     @IBOutlet weak var searchTF: UITextField!
     @IBOutlet weak var currentTempLabel: UILabel!
+    @IBOutlet weak var cityNameLabel: UILabel!
+    @IBOutlet weak var feelsLikeLabel: UILabel!
+    @IBOutlet weak var minTempLabel: UILabel!
+    @IBOutlet weak var humidityLabel: UILabel!
+    @IBOutlet weak var maxTempLabel: UILabel!
     
     let disposeBag = DisposeBag()
     var provider: MoyaProvider<WeatherEndpoints>!
-    var searchWeatherModel: SearchWeatherModel!
+    var searchWeatherVM: SearchWeatherVM!
     
     var latestCityName: Observable<String> {
         return searchTF
@@ -36,26 +41,31 @@ class SearchWeatherVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setup()
+        setupViewModel()
     }
     
-    private func setup() {
+    private func setupViewModel() {
         
         provider = MoyaProvider<WeatherEndpoints>()
         
-        searchWeatherModel = SearchWeatherModel(rxProvider: provider, cityName: latestCityName)
+        searchWeatherVM = SearchWeatherVM(provider: provider, cityName: latestCityName)
         
-        searchWeatherModel
+        searchWeatherVM
             .findWeather()
             .map { $0 }
-            .bind(onNext: { (model) in
-                self.configureUI(model: model)
+            .bind(onNext: { (weatherStrings) in
+                self.configureUI(weatherStrings)
             })
             .disposed(by: disposeBag)
     }
     
-    private func configureUI(model: CurrentWeather?) {
-        print(model?.name)
+    private func configureUI(_ weatherStrings: WeatherStrings?) {
+        self.cityNameLabel.text = weatherStrings?.cityName
+        self.minTempLabel.text = weatherStrings?.minTemp
+        self.maxTempLabel.text = weatherStrings?.maxTemp
+        self.currentTempLabel.text = weatherStrings?.temp
+        self.humidityLabel.text = weatherStrings?.humidity
+        self.feelsLikeLabel.text = weatherStrings?.feelsLikeTemp
     }
 
 
