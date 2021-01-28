@@ -11,7 +11,7 @@ import RxSwift
 import Moya
 import Moya_ModelMapper
 
-class SearchWeatherVC: UIViewController {
+class SearchWeatherVC: UIViewController, Storyboardable {
 
     @IBOutlet weak var searchTF: UITextField!
     @IBOutlet weak var currentTempLabel: UILabel!
@@ -41,13 +41,13 @@ class SearchWeatherVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupViewModel()
+        self.view.backgroundColor = UIColor.white
+        configureViewModel()
     }
     
-    private func setupViewModel() {
+    private func configureViewModel() {
         
         provider = MoyaProvider<WeatherEndpoints>()
-        
         searchWeatherVM = SearchWeatherVM(provider: provider, cityName: latestCityName)
         
         searchWeatherVM

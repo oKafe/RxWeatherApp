@@ -6,14 +6,25 @@
 //
 
 import UIKit
+import RxSwift
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDelegate {
 
-
+    var window:UIWindow?
+    private var coordinator: AppCoordinator!
+    private let disposeBag = DisposeBag()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        window = UIWindow(frame: UIScreen.main.bounds)
+
+        coordinator = AppCoordinator(window: window!)
+        coordinator.start()
+            .subscribe()
+            .disposed(by: disposeBag)
+        
         return true
     }
 
