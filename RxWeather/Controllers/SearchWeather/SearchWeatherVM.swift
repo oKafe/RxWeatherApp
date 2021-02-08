@@ -24,7 +24,6 @@ struct WeatherStrings {
 class SearchWeatherVM: NSObject {
     let rxProvider: MoyaProvider<WeatherEndpoints>
     let cityName: Observable<String>
-    private var currentWeather: CurrentWeather?
     
     init(provider: MoyaProvider<WeatherEndpoints>, cityName: Observable<String>) {
         self.rxProvider = provider
@@ -40,7 +39,7 @@ class SearchWeatherVM: NSObject {
             }
     }
     
-    func convertWeather(_ model: CurrentWeather?) -> Observable<WeatherStrings?> {
+    private func convertWeather(_ model: CurrentWeather?) -> Observable<WeatherStrings?> {
             guard let weatherModel = model else { return Observable.of(nil) }
             let tempString = "\(Int(weatherModel.mainWeather.temp))℃"
             let humidityString = "Humidity: \(weatherModel.mainWeather.humidity)%"

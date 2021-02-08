@@ -25,7 +25,6 @@ enum WeatherEndpoints {
 
 extension WeatherEndpoints: TargetType {
     
-    
     var baseURL: URL {
         return URL(string: "http://api.openweathermap.org/data/2.5")!
     }
@@ -33,9 +32,9 @@ extension WeatherEndpoints: TargetType {
     var path: String {
         switch self {
         case .CurrentWeather(_):
-            return "/weather"//?appid=0e6cb9fbea2df1d17d5a9675ebe7492c&q=\(query)
-        case .WeatherForecast(let exclude, let coord):
-            return "/onecall?lat=\(coord.lat)&lon=\(coord.lon)&exclude=\(exclude)&appid=a4dd4e9a8ddf9ed12cd26e6eba29871d"
+            return "/weather"
+        case .WeatherForecast(_,_):
+            return "/onecall"
         }
     }
     
@@ -44,13 +43,15 @@ extension WeatherEndpoints: TargetType {
     }
     
     var sampleData: Data {
-//        switch self {
-//        case .CurrentWeather(_):
-//
-//        case .WeatherForecast(_):
-//        }
-        return "{\"id\": 420006353, \"name\": \"London\", \"cod\": 200}".data(using: .utf8)!
+        switch self {
+        case .CurrentWeather(_):
+            return "{\"id\": 420006353, \"name\": \"London\", \"cod\": 200}".data(using: .utf8)!
+        case .WeatherForecast(_,_):
+            return "{\"id\": 420006353, \"name\": \"London\", \"cod\": 200}".data(using: .utf8)! //TODO: - Need to change sample response for weather forecast
+        }
+        
     }
+    
     
     var task: Task {
         switch self {
@@ -61,8 +62,14 @@ extension WeatherEndpoints: TargetType {
                     "q": query,
                     "appid": "a4dd4e9a8ddf9ed12cd26e6eba29871d"],
                 encoding: URLEncoding.default)
-        default:
-            return .requestPlain
+        case .WeatherForecast(let exclude, let coord):
+            return .requestParameters(
+                parameters: [
+                    "lat": coord.lat,
+                    "lon": coord.lon,
+                    "exclude": exclude,
+                    "appid": "a4dd4e9a8ddf9ed12cd26e6eba29871d"],
+                encoding: URLEncoding.default)
         }
     }
     
